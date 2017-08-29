@@ -10,16 +10,14 @@ html {
 }
 
 body {
+  margin: auto;
   background-color: rgb(105, 90, 107);
   font-family: 'Lato', sans-serif;
 }
 
-main {
-  color: white;
-  text-align: center;
-}
-
 .login {
+  text-align: center;
+  color: white;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -27,18 +25,17 @@ main {
   width: 100%;
 }
 
-.login span{
-  font-size: 45px;
-  padding: 10px 35px;
-  border: 5px solid white;
-  border-radius: 80px;
+.login img{
+  padding: 15px 68px;
+  border: 0.5px solid white;
+  border-radius: 39px;
+  width: 264px;
 }
 
-.login span:hover {
+.login img:hover {
   background-color: rgb(63, 54, 64);
 }
 
-p {
+.login p {
   font-size: 10px;
-  margin-top: 27px;
 }
