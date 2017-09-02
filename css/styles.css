@@ -50,6 +50,7 @@ body {
 
 .page-container {
   /*border: 1px solid white;*/
+  overflow: hidden;
   height: 100vh;
   display:flex;
 }
