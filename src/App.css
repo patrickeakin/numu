@@ -87,6 +87,17 @@ body {
   color: #ccc;
 }
 
+/* Clickable h3 buttons (LOGOUT, REFRESH ARTISTS) */
+.sidebar h3.clickable-button {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  color: white;
+}
+
+.sidebar h3.clickable-button:hover {
+  background-color: #695a6b;
+}
+
 .sidebar ul {
   margin: 0;
   padding: 0;
