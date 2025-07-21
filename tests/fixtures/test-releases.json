@@ -1,0 +1,57 @@
+[
+  {
+    "id": "release_1",
+    "name": "Abbey Road (50th Anniversary)",
+    "artist": "The Beatles",
+    "artistId": "test_artist_1",
+    "image": "https://i.scdn.co/image/ab67616d0000b273dc30583ba717007b00cceb25",
+    "releaseDate": "2024-07-15",
+    "type": "album",
+    "spotifyUrl": "https://open.spotify.com/search/The%20Beatles%20Abbey%20Road",
+    "source": "musicbrainz"
+  },
+  {
+    "id": "release_2",
+    "name": "The Villager's Companion",
+    "artist": "Califone",
+    "artistId": "test_artist_2",
+    "image": "https://coverartarchive.org/release/12345/front-250.jpg",
+    "releaseDate": "2024-07-10",
+    "type": "album",
+    "spotifyUrl": "https://open.spotify.com/search/Califone%20The%20Villager's%20Companion",
+    "source": "musicbrainz"
+  },
+  {
+    "id": "release_3",
+    "name": "The Villager's Companion",
+    "artist": "Califone",
+    "artistId": "test_artist_2",
+    "image": "https://coverartarchive.org/release/67890/front-250.jpg",
+    "releaseDate": "2024-07-10",
+    "type": "album",
+    "spotifyUrl": "https://open.spotify.com/search/Califone%20The%20Villager's%20Companion",
+    "source": "musicbrainz"
+  },
+  {
+    "id": "release_4",
+    "name": "Bohemian Rhapsody (Remastered)",
+    "artist": "Queen",
+    "artistId": "test_artist_3",
+    "image": "https://coverartarchive.org/release/11111/front-250.jpg",
+    "releaseDate": "2024-06-20",
+    "type": "single",
+    "spotifyUrl": "https://open.spotify.com/search/Queen%20Bohemian%20Rhapsody",
+    "source": "musicbrainz"
+  },
+  {
+    "id": "release_5",
+    "name": "Stairway to Heaven (Live)",
+    "artist": "Led Zeppelin",
+    "artistId": "test_artist_4",
+    "image": "https://coverartarchive.org/release/22222/front-250.jpg",
+    "releaseDate": "2024-01-15",
+    "type": "ep",
+    "spotifyUrl": "https://open.spotify.com/search/Led%20Zeppelin%20Stairway%20to%20Heaven",
+    "source": "musicbrainz"
+  }
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "id": "test_artist_1",
+    "name": "The Beatles"
+  },
+  {
+    "id": "test_artist_2", 
+    "name": "Califone"
+  },
+  {
+    "id": "test_artist_3",
+    "name": "Queen"
+  },
+  {
+    "id": "test_artist_4",
+    "name": "Led Zeppelin"
+  },
+  {
+    "id": "test_artist_5",
+    "name": "Radiohead"
+  }
+]

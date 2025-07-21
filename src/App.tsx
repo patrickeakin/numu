@@ -53,6 +53,12 @@ function App() {
   };
 
   const handleRefreshArtists = () => {
+    // Prevent concurrent operations
+    if (loading) {
+      console.log('Import already in progress, ignoring refresh request');
+      return;
+    }
+    
     const token = localStorage.getItem('spotify_access_token');
     if (token && isAuthenticated) {
       // Clear cache to force fresh fetch
@@ -63,6 +69,12 @@ function App() {
 
 
   const handleInitialFetch = () => {
+    // Prevent concurrent operations
+    if (loading) {
+      console.log('Import already in progress, ignoring request');
+      return;
+    }
+    
     const token = localStorage.getItem('spotify_access_token');
     console.log('🎵 handleInitialFetch called');
     console.log('Token exists:', !!token);

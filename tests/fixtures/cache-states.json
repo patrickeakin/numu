@@ -1,0 +1,63 @@
+{
+  "complete_cache": {
+    "followedArtists": [
+      {"id": "test_artist_1", "name": "The Beatles"},
+      {"id": "test_artist_2", "name": "Califone"},
+      {"id": "test_artist_3", "name": "Queen"}
+    ],
+    "artistsFetchedAt": 1700000000000,
+    "releases": [
+      {
+        "id": "release_1",
+        "name": "Abbey Road (50th Anniversary)",
+        "artist": "The Beatles",
+        "releaseDate": "2024-07-15",
+        "type": "album",
+        "source": "musicbrainz"
+      }
+    ],
+    "lastProcessedArtistIndex": 3,
+    "totalArtists": 3,
+    "isComplete": true,
+    "timestamp": 1700000000000,
+    "userId": "test_user_123",
+    "artistListHash": "abc123"
+  },
+  "incomplete_cache": {
+    "followedArtists": [
+      {"id": "test_artist_1", "name": "The Beatles"},
+      {"id": "test_artist_2", "name": "Califone"},
+      {"id": "test_artist_3", "name": "Queen"}
+    ],
+    "artistsFetchedAt": 1700000000000,
+    "releases": [
+      {
+        "id": "release_1", 
+        "name": "Abbey Road (50th Anniversary)",
+        "artist": "The Beatles",
+        "releaseDate": "2024-07-15",
+        "type": "album",
+        "source": "musicbrainz"
+      }
+    ],
+    "lastProcessedArtistIndex": 1,
+    "totalArtists": 3,
+    "isComplete": false,
+    "timestamp": 1700000000000,
+    "userId": "test_user_123",
+    "artistListHash": "abc123"
+  },
+  "expired_cache": {
+    "followedArtists": [
+      {"id": "test_artist_1", "name": "The Beatles"}
+    ],
+    "artistsFetchedAt": 1600000000000,
+    "releases": [],
+    "lastProcessedArtistIndex": 0,
+    "totalArtists": 1,
+    "isComplete": false,
+    "timestamp": 1600000000000,
+    "userId": "test_user_123",
+    "artistListHash": "old123"
+  }
+}
