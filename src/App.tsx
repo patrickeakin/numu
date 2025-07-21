@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import './App.css';
-import { getAuthUrl, getAccessTokenFromUrl, getNewReleasesUnified, clearUnifiedCache } from './api';
+import { getAuthUrl, getAccessTokenFromUrl, getNewReleasesUnified, clearUnifiedCache } from './services';
 import { CoverArt } from './components';
 
 interface Release {

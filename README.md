@@ -169,7 +169,7 @@ src/
 ├── App.tsx                    # Main application component
 ├── components/
 │   └── CoverArt.tsx          # Advanced cover art component with loading states
-├── api/                      # Modular API layer
+├── services/                 # Modular service layer
 │   ├── unified-api.ts        # Main orchestration
 │   ├── spotify-client.ts     # Spotify OAuth & artist fetching
 │   ├── musicbrainz-client.ts # MusicBrainz release search
@@ -179,7 +179,7 @@ src/
 └── App.css                   # Styling with loading animations
 
 Key Features:
-- Modular API architecture with focused responsibilities
+- Modular service architecture with focused responsibilities
 - Smart release deduplication with cover art prioritization
 - Advanced image loading detection with error handlers
 - Component-based React architecture with loading states
