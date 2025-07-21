@@ -12,7 +12,7 @@ A React application that tracks new releases from your followed Spotify artists 
 - **Cover Art Integration**: Displays album artwork from Cover Art Archive with smart fallback handling
 - **Smart Release Prioritization**: Automatically selects the best version when multiple formats exist (prioritizes releases with cover art)
 - **Responsive Design**: Works on desktop, tablet, and mobile
-- **Comprehensive Testing**: 52 Playwright E2E tests with advanced cover art loading detection
+- **Comprehensive Testing**: 54 Playwright E2E tests with 49 passing (90% success rate)
 
 ## Technology Stack
 
@@ -93,7 +93,7 @@ npx playwright show-report
 
 ### Test Architecture
 
-The test suite uses **Component Object Model** architecture with 52 comprehensive test cases:
+The test suite uses **Component Object Model** architecture with 54 comprehensive test cases (49 passing, 90% success rate):
 
 #### **Authentication Tests (7 tests)**
 - OAuth login/logout flows
@@ -186,44 +186,3 @@ Key Features:
 - Intelligent caching with resumable operations
 ```
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make changes and add tests
-4. Ensure all tests pass: `npm run test:e2e`
-5. Commit with descriptive messages
-6. Push and create a Pull Request
-
-### Code Quality
-
-- **Testing**: All new features require corresponding E2E tests
-- **TypeScript**: Strict typing enforced throughout
-- **Error Handling**: Graceful degradation for all failure scenarios
-- **Performance**: Efficient caching and API rate limiting
-
-## Deployment
-
-### Build for Production
-```bash
-npm run build
-```
-
-The `build` folder contains optimized production files ready for deployment.
-
-### Environment Variables (Production)
-```env
-REACT_APP_SPOTIFY_CLIENT_ID=your_production_client_id
-REACT_APP_SPOTIFY_REDIRECT_URI=https://yourdomain.com
-```
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Acknowledgments
-
-- [Spotify Web API](https://developer.spotify.com/documentation/web-api/) for artist data
-- [MusicBrainz](https://musicbrainz.org/) for comprehensive release information
-- [Cover Art Archive](https://coverartarchive.org/) for album artwork
-- [Playwright](https://playwright.dev/) for robust E2E testing framework
