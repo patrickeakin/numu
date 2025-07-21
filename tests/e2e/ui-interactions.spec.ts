@@ -149,6 +149,148 @@ test.describe('UI Interactions', () => {
     expect(releases2.length).toBe(releases.length);
   });
 
+  test('should show consistent fallback for all image loading failures', async ({ page }) => {
+    // Setup mocks that return valid URLs but images fail to load
+    await SpotifyMock.setupRoutes(page);
+    await MusicBrainzMock.setupRoutes(page);
+    
+    // Mock valid cover art URLs
+    await page.route('**/coverartarchive.org/**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          images: [{
+            front: true,
+            thumbnails: {
+              small: 'https://example.com/valid-but-failing-image-1.jpg',
+              large: 'https://example.com/valid-but-failing-image-1-large.jpg'
+            },
+            image: 'https://example.com/valid-but-failing-image-1-full.jpg'
+          }]
+        })
+      });
+    });
+    
+    // Block the actual image loading to simulate browser image load failures
+    await page.route('**/example.com/**', async (route) => {
+      await route.abort('failed');
+    });
+    
+    const releaseGrid = new ReleaseGrid(page);
+    await releaseGrid.waitForLoading();
+    
+    // Get all releases that should have failed image loading
+    const releases = await releaseGrid.getAllReleases();
+    expect(releases.length).toBeGreaterThan(0);
+    
+    // Count total release cards
+    const totalReleaseCards = await page.locator('[data-testid="release-card"]').count();
+    
+    // Count release cards with "No Cover" text
+    const noCoverElements = await page.locator('.album-artwork:has-text("No Cover")').count();
+    
+    // Count release cards with empty/broken images (should have background-image but no "No Cover" text)
+    const emptyImageElements = await page.locator('.album-artwork').evaluateAll(elements => {
+      return elements.filter(el => {
+        const style = (el as HTMLElement).style.backgroundImage;
+        const hasNoImageUrl = !style || style === 'none' || style === '';
+        const hasNoCoverText = el.textContent?.includes('No Cover');
+        // This finds elements with image URLs but no "No Cover" text (the bug!)
+        return style && style !== 'none' && !hasNoCoverText;
+      }).length;
+    });
+    
+    console.log(`Total releases: ${totalReleaseCards}`);
+    console.log(`"No Cover" elements: ${noCoverElements}`);
+    console.log(`Empty image elements (bug): ${emptyImageElements}`);
+    
+    // CRITICAL TEST: All failed images should show "No Cover" text consistently
+    // If this fails, it exposes the bug where some show "No Cover" and others are blank
+    expect(noCoverElements + emptyImageElements).toBe(totalReleaseCards);
+    expect(emptyImageElements).toBe(0); // No releases should have broken images without "No Cover" text
+  });
+
+  test('should handle mixed image loading scenarios consistently', async ({ page }) => {
+    // Create a scenario with both API failures and browser image loading failures
+    await SpotifyMock.setupRoutes(page);
+    
+    // Mock MusicBrainz to return releases with mixed cover art scenarios
+    await page.route('**/musicbrainz.org/ws/2/release**', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          releases: [
+            {
+              id: 'release-no-cover-art',
+              title: 'Album Without Cover Art',
+              date: new Date().toISOString().split('T')[0],
+              'artist-credit': [{ name: 'Test Artist', artist: { id: 'artist-1', name: 'Test Artist' } }],
+              'cover-art-archive': { artwork: false, count: 0, front: false, back: false },
+              'release-group': { id: 'rg-1', 'primary-type': 'Album' }
+            },
+            {
+              id: 'release-with-cover-art',
+              title: 'Album With Cover Art',
+              date: new Date().toISOString().split('T')[0],
+              'artist-credit': [{ name: 'Test Artist', artist: { id: 'artist-1', name: 'Test Artist' } }],
+              'cover-art-archive': { artwork: true, count: 1, front: true, back: false },
+              'release-group': { id: 'rg-2', 'primary-type': 'Album' }
+            }
+          ]
+        })
+      });
+    });
+    
+    // First release: API returns no cover art (should show "No Cover")
+    await page.route('**/coverartarchive.org/release/release-no-cover-art', async (route) => {
+      await route.fulfill({ status: 404 });
+    });
+    
+    // Second release: API returns valid URL but image fails to load (should also show "No Cover")
+    await page.route('**/coverartarchive.org/release/release-with-cover-art', async (route) => {
+      await route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({
+          images: [{
+            front: true,
+            thumbnails: { small: 'https://failing-image.com/cover.jpg' },
+            image: 'https://failing-image.com/cover-full.jpg'
+          }]
+        })
+      });
+    });
+    
+    // Block the image URL so it fails to load in browser
+    await page.route('**/failing-image.com/**', async (route) => {
+      await route.abort('failed');
+    });
+    
+    const releaseGrid = new ReleaseGrid(page);
+    await releaseGrid.waitForLoading();
+    
+    const totalReleases = await releaseGrid.getReleaseCount();
+    expect(totalReleases).toBe(2);
+    
+    // BOTH releases should show "No Cover" text (one from API failure, one from image load failure)
+    const noCoverElements = await page.locator('.album-artwork:has-text("No Cover")').count();
+    expect(noCoverElements).toBe(2); // This will fail due to the bug
+    
+    // No releases should have broken images without fallback text
+    const brokenImageElements = await page.locator('.album-artwork').evaluateAll(elements => {
+      return elements.filter(el => {
+        const style = (el as HTMLElement).style.backgroundImage;
+        const hasImageUrl = style && style !== 'none' && style.includes('url(');
+        const hasNoCoverText = el.textContent?.includes('No Cover');
+        return hasImageUrl && !hasNoCoverText;
+      }).length;
+    });
+    
+    expect(brokenImageElements).toBe(0); // This will fail, exposing the bug
+  });
+
   test('should display loading state for cover art', async ({ page }) => {
     // Mock slow cover art responses
     await page.route('**/coverartarchive.org/**', async (route) => {

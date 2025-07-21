@@ -291,6 +291,7 @@ body {
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
   position: relative;
+  transition: all 0.3s ease;
 }
 
 .album-artwork::after {
@@ -303,6 +304,60 @@ body {
   background: linear-gradient(45deg, transparent 70%, rgba(255, 255, 255, 0.1));
   border-radius: 8px;
 }
+
+/* Cover Art Loading States */
+.cover-art-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  z-index: 2;
+}
+
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid rgba(255, 255, 255, 0.8);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.cover-art-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.no-cover-text {
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 12px;
+  font-weight: 300;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
 
 .card-metadata {
   padding: 8px 16px 16px;

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import './App.css';
-import { getAuthUrl, getAccessTokenFromUrl, getNewReleasesUnified, clearUnifiedCache } from './unified-api';
+import { getAuthUrl, getAccessTokenFromUrl, getNewReleasesUnified, clearUnifiedCache } from './api';
+import { CoverArt } from './components';
 
 interface Release {
   id: string;
@@ -361,26 +362,10 @@ function App() {
                 onClick={() => handleReleaseClick(release.spotifyUrl)}
                 data-testid="release-card"
               >
-                <div 
-                  className="album-artwork" 
-                  style={{ 
-                    backgroundImage: `url(${release.image})`,
-                    backgroundColor: release.image ? 'transparent' : 'rgba(255, 255, 255, 0.1)'
-                  }}
-                >
-                  {!release.image && (
-                    <div style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'center', 
-                      height: '100%', 
-                      color: 'rgba(255, 255, 255, 0.5)',
-                      fontSize: '12px' 
-                    }}>
-                      No Cover
-                    </div>
-                  )}
-                </div>
+                <CoverArt 
+                  imageUrl={release.image}
+                  altText={`${release.name} by ${release.artist}`}
+                />
                 <div className="api-indicator musicbrainz">
                   MB
                 </div>
