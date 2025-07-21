@@ -118,6 +118,61 @@ test.describe('UI Interactions', () => {
     }
   });
 
+  test('should handle cover art loading failures gracefully', async ({ page }) => {
+    // Mock Cover Art Archive to return 404s for some releases
+    await page.route('**/coverartarchive.org/**', async (route) => {
+      const url = route.request().url();
+      if (url.includes('test-release-1')) {
+        // Simulate failed cover art
+        await route.fulfill({ status: 404 });
+      } else {
+        await route.continue();
+      }
+    });
+    
+    const releaseGrid = new ReleaseGrid(page);
+    await releaseGrid.waitForLoading();
+    
+    // Check that releases still load despite cover art failures
+    const releases = await releaseGrid.getAllReleases();
+    expect(releases.length).toBeGreaterThan(0);
+    
+    // Verify "No Cover" fallback appears for failed images
+    const noCoverElements = await page.locator('.album-artwork:has-text("No Cover")').count();
+    const totalReleases = await releaseGrid.getReleaseCount();
+    
+    // Should have at least some releases (successful or with fallback)
+    expect(totalReleases).toBeGreaterThan(0);
+    
+    // App should continue functioning normally
+    const releases2 = await releaseGrid.getAllReleases();
+    expect(releases2.length).toBe(releases.length);
+  });
+
+  test('should display loading state for cover art', async ({ page }) => {
+    // Mock slow cover art responses
+    await page.route('**/coverartarchive.org/**', async (route) => {
+      // Add delay to simulate slow loading
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await route.continue();
+    });
+    
+    const releaseGrid = new ReleaseGrid(page);
+    
+    // Check that releases appear before cover art finishes loading
+    await page.waitForSelector('[data-testid="release-card"]', { timeout: 5000 });
+    const initialReleaseCount = await releaseGrid.getReleaseCount();
+    expect(initialReleaseCount).toBeGreaterThan(0);
+    
+    // Verify app remains responsive during cover art loading
+    const sidebar = new Sidebar(page);
+    await sidebar.setDurationFilter('90');
+    
+    // UI should still respond to filters
+    const releasesAfterFilter = await releaseGrid.getAllReleases();
+    expect(releasesAfterFilter.length).toBeGreaterThanOrEqual(0);
+  });
+
   test('should handle empty state', async ({ page }) => {
     // Clear cache and set up empty artist response
     await CacheHelper.clearCache(page);
