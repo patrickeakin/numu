@@ -1,46 +1,215 @@
-# Getting Started with Create React App
+# NUMU - Spotify New Releases Tracker
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React application that tracks new releases from your followed Spotify artists using MusicBrainz data, with intelligent caching and comprehensive test automation.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **OAuth Authentication**: Secure Spotify login integration
+- **Smart Release Tracking**: Fetches releases from followed artists using MusicBrainz API
+- **Intelligent Caching**: 30-day cache with resumable import progress
+- **Advanced Filtering**: Filter by time periods (today, 7 days, 90 days, 6 months)
+- **Flexible Sorting**: Sort by release date or artist name
+- **Cover Art Integration**: Displays album artwork from Cover Art Archive
+- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Comprehensive Testing**: 38 Playwright E2E tests with 100% pass rate
 
-### `npm start`
+## Technology Stack
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+- **Frontend**: React 18 with TypeScript
+- **APIs**: Spotify Web API, MusicBrainz API, Cover Art Archive
+- **Storage**: localStorage with intelligent quota management
+- **Testing**: Playwright with Component Object Model architecture
+- **CI/CD**: GitHub Actions with automated testing
+- **Styling**: CSS with responsive design
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Prerequisites
 
-### `npm test`
+- Node.js 16+ and npm
+- Spotify Developer Account
+- Modern web browser
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Setup
 
-### `npm run build`
+### 1. Clone and Install
+```bash
+git clone https://github.com/patrickeakin/numu.git
+cd numu
+npm install
+```
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 2. Spotify API Configuration
+1. Create a Spotify app at [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+2. Add `http://localhost:3000` to your app's redirect URIs
+3. Create a `.env` file in the project root:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```env
+REACT_APP_SPOTIFY_CLIENT_ID=your_spotify_client_id_here
+REACT_APP_SPOTIFY_REDIRECT_URI=http://localhost:3000
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 3. Run the Application
+```bash
+npm start
+```
 
-### `npm run eject`
+Open [http://localhost:3000](http://localhost:3000) to view the app.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Usage
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **Login**: Click the NUMU logo to authenticate with Spotify
+2. **Import**: Click "Import Followed Artists" to scan for new releases
+3. **Filter**: Use duration filters to view releases from specific time periods
+4. **Sort**: Toggle between chronological and alphabetical sorting
+5. **Listen**: Click any release card to search for it on Spotify
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+### Caching System
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- **Smart Resumption**: Interrupted imports resume from where they left off
+- **30-Day Cache**: Avoids redundant API calls for recent data
+- **Automatic Refresh**: Expired cache triggers fresh data fetching
+- **Quota Management**: Handles localStorage limits gracefully
 
-## Learn More
+## Testing
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Running Tests
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```bash
+# Install Playwright browsers (first time only)
+npx playwright install
+
+# Run all tests
+npm run test:e2e
+
+# Run tests in headed mode (see browser)
+npm run test:e2e:headed
+
+# Run specific test file
+npx playwright test auth.spec.ts
+
+# Generate test report
+npx playwright show-report
+```
+
+### Test Architecture
+
+The test suite uses **Component Object Model** architecture with 38 comprehensive test cases:
+
+#### **Authentication Tests (7 tests)**
+- OAuth login/logout flows
+- Token expiration handling
+- Network error scenarios
+
+#### **Import Flow Tests (8 tests)**
+- Fresh data imports
+- Cache resumption
+- Rate limiting handling
+- Data deduplication
+
+#### **UI Interaction Tests (9 tests)**
+- Duration filtering
+- Sorting functionality
+- Responsive design
+- Cover art loading
+
+#### **Error Handling Tests (14 tests)**
+- API failures
+- Network connectivity issues
+- Malformed data handling
+- Edge case scenarios
+
+### Test Structure
+```
+tests/
+├── e2e/                    # Test specifications
+├── component-objects/      # Page object models
+├── mocks/                  # API mocking services
+├── helpers/                # Test utilities
+├── fixtures/               # Test data
+└── playwright.config.ts    # Test configuration
+```
+
+## API Integration
+
+### Spotify Web API
+- **Endpoint**: `/v1/me/following` - Fetch followed artists
+- **Rate Limiting**: 2-second delays between paginated requests
+- **Error Handling**: Graceful degradation with user notifications
+
+### MusicBrainz API
+- **Search**: Artist lookup with name normalization
+- **Releases**: Recent release fetching (180-day window)
+- **Rate Limiting**: 1 request per second with backoff
+- **User Agent**: Compliant identification header
+
+### Cover Art Archive
+- **Images**: Album artwork thumbnails
+- **Caching**: In-memory image URL caching
+- **Fallbacks**: Graceful handling of missing artwork
+
+## Development
+
+### Available Scripts
+
+```bash
+npm start          # Development server
+npm run build      # Production build
+npm test           # Jest unit tests (if any)
+npm run test:e2e   # Playwright E2E tests
+```
+
+### Architecture Overview
+
+```
+src/
+├── App.tsx              # Main application component
+├── unified-api.ts       # API integration layer
+└── App.css             # Styling
+
+Key Features:
+- Unified API abstraction combining Spotify + MusicBrainz
+- Intelligent caching with resumable operations
+- Component-based React architecture
+- Error boundary and graceful degradation
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature-name`
+3. Make changes and add tests
+4. Ensure all tests pass: `npm run test:e2e`
+5. Commit with descriptive messages
+6. Push and create a Pull Request
+
+### Code Quality
+
+- **Testing**: All new features require corresponding E2E tests
+- **TypeScript**: Strict typing enforced throughout
+- **Error Handling**: Graceful degradation for all failure scenarios
+- **Performance**: Efficient caching and API rate limiting
+
+## Deployment
+
+### Build for Production
+```bash
+npm run build
+```
+
+The `build` folder contains optimized production files ready for deployment.
+
+### Environment Variables (Production)
+```env
+REACT_APP_SPOTIFY_CLIENT_ID=your_production_client_id
+REACT_APP_SPOTIFY_REDIRECT_URI=https://yourdomain.com
+```
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Acknowledgments
+
+- [Spotify Web API](https://developer.spotify.com/documentation/web-api/) for artist data
+- [MusicBrainz](https://musicbrainz.org/) for comprehensive release information
+- [Cover Art Archive](https://coverartarchive.org/) for album artwork
+- [Playwright](https://playwright.dev/) for robust E2E testing framework
