@@ -75,9 +75,11 @@ export const getArtistReleasesFromMusicBrainz = async (
     console.log(`🎵 Fetching releases for artist ID: ${artistId}`);
     const response = await axios.get(`${MUSICBRAINZ_BASE_URL}/release`, {
       params: {
-        query: `arid:${artistId}`,
+        artist: artistId,
         fmt: 'json',
-        limit: 100
+        limit: 100,
+        inc: 'artist-credits+release-groups',
+        status: 'official'
       },
       headers: {
         'User-Agent': USER_AGENT
@@ -121,7 +123,9 @@ export const getCoverArtUrl = async (releaseId: string): Promise<string> => {
     const response = await axios.get(`https://coverartarchive.org/release/${releaseId}`, {
       headers: {
         'User-Agent': USER_AGENT
-      }
+      },
+      maxRedirects: 5,
+      timeout: 10000
     });
 
     if (response.data.images && response.data.images.length > 0) {
@@ -143,8 +147,20 @@ export const getCoverArtUrl = async (releaseId: string): Promise<string> => {
     imageCache.set(releaseId, '');
     return '';
   } catch (error) {
+    // Handle specific error cases
+    if (axios.isAxiosError(error)) {
+      if (error.response?.status === 404) {
+        console.log(`🖼️ No cover art available for ${releaseId} (404)`);
+      } else if (error.response?.status === 307 || error.response?.status === 302) {
+        console.log(`🖼️ Cover art redirect for ${releaseId}, but data not accessible`);
+      } else {
+        console.log(`🖼️ Cover art error for ${releaseId}: ${error.response?.status || error.message}`);
+      }
+    } else {
+      console.log(`🖼️ Cover art error for ${releaseId}: ${error}`);
+    }
+    
     imageCache.set(releaseId, '');
-    console.log(`🖼️ No cover art available for ${releaseId}`);
     return '';
   }
 };

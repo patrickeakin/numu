@@ -9,9 +9,10 @@ A React application that tracks new releases from your followed Spotify artists 
 - **Intelligent Caching**: 30-day cache with resumable import progress
 - **Advanced Filtering**: Filter by time periods (today, 7 days, 90 days, 6 months)
 - **Flexible Sorting**: Sort by release date or artist name
-- **Cover Art Integration**: Displays album artwork from Cover Art Archive
+- **Cover Art Integration**: Displays album artwork from Cover Art Archive with smart fallback handling
+- **Smart Release Prioritization**: Automatically selects the best version when multiple formats exist (prioritizes releases with cover art)
 - **Responsive Design**: Works on desktop, tablet, and mobile
-- **Comprehensive Testing**: 38 Playwright E2E tests with 100% pass rate
+- **Comprehensive Testing**: 52 Playwright E2E tests with advanced cover art loading detection
 
 ## Technology Stack
 
@@ -92,7 +93,7 @@ npx playwright show-report
 
 ### Test Architecture
 
-The test suite uses **Component Object Model** architecture with 38 comprehensive test cases:
+The test suite uses **Component Object Model** architecture with 52 comprehensive test cases:
 
 #### **Authentication Tests (7 tests)**
 - OAuth login/logout flows
@@ -105,11 +106,13 @@ The test suite uses **Component Object Model** architecture with 38 comprehensiv
 - Rate limiting handling
 - Data deduplication
 
-#### **UI Interaction Tests (9 tests)**
+#### **UI Interaction Tests (13 tests)**
 - Duration filtering
 - Sorting functionality
 - Responsive design
-- Cover art loading
+- Cover art loading with failure detection
+- Loading states and transitions
+- Mixed image loading scenarios
 
 #### **Error Handling Tests (14 tests)**
 - API failures
@@ -142,9 +145,11 @@ tests/
 - **User Agent**: Compliant identification header
 
 ### Cover Art Archive
-- **Images**: Album artwork thumbnails
+- **Images**: Album artwork thumbnails with smart fallback detection
 - **Caching**: In-memory image URL caching
-- **Fallbacks**: Graceful handling of missing artwork
+- **Error Handling**: Detects both API failures and browser image loading failures
+- **Loading States**: Visual feedback during image loading with CSS animations
+- **Smart Prioritization**: When multiple releases exist, prioritizes those with cover art
 
 ## Development
 
@@ -161,15 +166,24 @@ npm run test:e2e   # Playwright E2E tests
 
 ```
 src/
-├── App.tsx              # Main application component
-├── unified-api.ts       # API integration layer
-└── App.css             # Styling
+├── App.tsx                    # Main application component
+├── components/
+│   └── CoverArt.tsx          # Advanced cover art component with loading states
+├── api/                      # Modular API layer
+│   ├── unified-api.ts        # Main orchestration
+│   ├── spotify-client.ts     # Spotify OAuth & artist fetching
+│   ├── musicbrainz-client.ts # MusicBrainz release search
+│   ├── cache-manager.ts      # localStorage caching
+│   ├── release-formatter.ts  # Smart grouping & deduplication
+│   └── types.ts             # Shared TypeScript interfaces
+└── App.css                   # Styling with loading animations
 
 Key Features:
-- Unified API abstraction combining Spotify + MusicBrainz
+- Modular API architecture with focused responsibilities
+- Smart release deduplication with cover art prioritization
+- Advanced image loading detection with error handlers
+- Component-based React architecture with loading states
 - Intelligent caching with resumable operations
-- Component-based React architecture
-- Error boundary and graceful degradation
 ```
 
 ## Contributing
